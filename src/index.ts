@@ -1,15 +1,14 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-import userRoutes from "@/routes/users.js";
+import userRoutes from "@/routes/users/users.js";
 import session from "express-session";
 import "dotenv/config";
 import "@/strategies/local-strategy.js";
-import passport, { Passport } from "passport";
+import passport from "passport";
 import cors from "cors";
 
 import productRouter from "./routes/admin/products.js";
 import orderRoutes from "./routes/admin/orders.js";
-
 const app = express();
 
 //body parser middleware to parse request body
@@ -25,8 +24,12 @@ const sessionMiddleware = session({
     httpOnly: true,
   },
 });
+
 const corsOptions = {
-  origin: "http://localhost:5173", //(https://your-client-app.com)
+  origin: "http://localhost:5173", // Replace with your client's origin
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
   optionsSuccessStatus: 200,
 };
 
@@ -39,76 +42,99 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// .................route protection........................
+const checkAuthenticated = (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  if (request.isAuthenticated()) {
+    return next();
+  } else {
+    return response.status(401).send({ message: "Not unauthorized" });
+  }
+  //return response.redirect("http://localhost:5173/api/admin/login");
+};
+
 // ......................Routes registration...................................
 app.use("/api", userRoutes);
-app.use("/api/admin", productRouter);
-app.use("/api/admin", orderRoutes);
+app.use("/api/admin", checkAuthenticated, productRouter);
+app.use("/api/admin", checkAuthenticated, orderRoutes);
 
-// app.post("/api/auth/login", (req, res, next) => {
-//   passport.authenticate(
-//     "local",
-//     (
-//       err: any,
-//       user: Express.User | false | null,
-//       info: object | string | Array<string | undefined>
-//     ) => {
-//       if (err) {
-//         return next(err);
-//       }
-//       if (!user) {
-//         return res.status(401).send(info);
-//       }
-//       console.log("info: ", info);
-//       req.user = user;
-//       req.login(user, (err) => {
-//         // ! important
-//         if (err) {
-//           return res.status(500).json({ error: "Login failed." });
-//         }
-//         res.status(200).send();
-//       });
-//     }
-//   )(req, res, next);
-// });
+app.post(
+  "/api/login",
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log("Request got here");
+    passport.authenticate(
+      "local",
+      (
+        err: any,
+        user: Express.User | false | null,
+        info: object | string | Array<string | undefined>
+      ) => {
+        if (err) {
+          console.log("err is: ", err.message);
+          return next(err);
+        }
 
-app.post("/api/auth/login", passport.authenticate("local"), (req, res) => {
-  // req.session.visited = true;
-  console.log(req.session);
-  //console.log(req.sessionID);
-  res.send("login page");
+        if (!user) {
+          return res.status(401).send(info);
+        }
+        console.log("info: ", info);
+        req.user = user;
+        req.login(user, (err) => {
+          // ! important
+          if (err) {
+            return res.status(500).send({ error: "Login failed." });
+          }
+          res.status(200).send();
+        });
+      }
+    )(req, res, next);
+  },
+  (err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack); // Log the error stack trace for debugging
+    res.status(err.status || 401).json({
+      error: {
+        message: err.message || "Invalid credentials",
+      },
+    });
+  }
+);
+
+app.post("/api/admin/logout", function (request, response, next) {
+  request.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    request.session.destroy(function (err) {
+      // destroys the session
+      response
+        .status(200)
+        .clearCookie("connect.sid")
+        .send({ message: "Logout successful" }); // clear the cookie
+    });
+
+    //response.redirect("/");
+  });
 });
 
 app.get("/api/auth/status", (request, response) => {
-  console.log("User ID: ", request.user);
-  response.send("hello world");
+  console.log("Request HeadersD: ", request.headers);
+  if (!request.user)
+    return response.status(401).send({ messge: "Unauthenticated" });
+  return response.status(200).send({ messge: "Authenticated" });
 });
 
 app.listen(4000, () => {
   console.log("Listening on port 4000");
 });
 
-// import { db } from "@/db/db.js";
-// import { users } from "@/db/schema.js";
-
-// async function insert(){
-//     try{
-// await db.insert(users).values({
-//     name: "FaithFul",
-//     password: "asecret",
-//     address: "Ogun state of nigeria",
-//     email: "faithful@gmail.com",
-//     phone: "0704562996"
-// })
-//     }catch(err){
-//         console.log("Error: ",err)
-//     }
+// {
+//   "surname": "Ndu",
+//   "lastname": "Bola",
+//   "email": "bola@gmail.com",
+//   "password": "123456",
+//   "address": "Ebonyi",
+//   "phone": "123456"
 // }
-
-//   insert()
-
-// async function select(){
-//      const result = await db.select().from(users);
-//      console.log(result)
-// }
-
-// //select()
