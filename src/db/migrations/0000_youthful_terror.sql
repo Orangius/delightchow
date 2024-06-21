@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS "foods" (
 	"food_id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
+	"imageURL" text NOT NULL,
 	"description" text NOT NULL,
 	"price" integer NOT NULL,
 	"category" varchar(50)

@@ -103,6 +103,7 @@ app.post(
 );
 
 app.post("/api/admin/logout", function (request, response, next) {
+  console.log("request user: ", request.user);
   request.logout(function (err) {
     if (err) {
       return next(err);
@@ -125,6 +126,40 @@ app.get("/api/auth/status", (request, response) => {
     return response.status(401).send({ messge: "Unauthenticated" });
   return response.status(200).send({ messge: "Authenticated" });
 });
+
+// app.post(
+//   "/api/upload",
+//   upload.single("avatar"),
+//   async (request: Request, response: Response) => {
+//     console.log("Body: ", request.body);
+//     console.log("File: ", request.file);
+
+//     const fileStream = fs.createReadStream(request.file?.path as string);
+
+//     const upload = new Upload({
+//       client: s3,
+//       params: {
+//         Bucket: process.env.BUCKET_NAME as string,
+//         Key: request.file?.originalname,
+//         Body: fileStream,
+//         ContentType: request.file?.mimetype,
+//       },
+//     });
+//     const result = await upload.done();
+
+// const command = new PutObjectCommand({
+//   Bucket: process.env.BUCKET_NAME as string,
+//   Key: request.file?.originalname,
+//   Body: fileStream,
+//   ContentType: request.file?.mimetype,
+// });
+
+// const result = await s3.send(command);
+
+//     console.log("result: ", result);
+//     response.send("File received");
+//   }
+// );
 
 app.listen(4000, () => {
   console.log("Listening on port 4000");

@@ -21,6 +21,7 @@ export const users = pgTable("users", {
 export const foods = pgTable("foods", {
   food_id: serial("food_id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
+  imageURL: text("imageURL").notNull(),
   description: text("description").notNull(),
   price: integer("price").notNull(),
   category: varchar("category", { length: 50 }),
