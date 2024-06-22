@@ -31,6 +31,12 @@ CREATE TABLE IF NOT EXISTS "payment" (
 	"status" varchar(50) NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "session" (
+	"sid" varchar(50) PRIMARY KEY NOT NULL,
+	"sess" json,
+	"expire" timestamp (6)
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"user_id" serial PRIMARY KEY NOT NULL,
 	"surname" varchar(256) NOT NULL,

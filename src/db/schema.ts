@@ -6,6 +6,7 @@ import {
   integer,
   uuid,
   timestamp,
+  json,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -49,4 +50,10 @@ export const payment = pgTable("payment", {
   payment_method: varchar("payment_method").notNull(),
   amount: integer("amount").notNull(),
   status: varchar("status", { length: 50 }).notNull(),
+});
+
+export const session = pgTable("session", {
+  sid: varchar("sid", { length: 50 }).primaryKey(),
+  sess: json("sess"),
+  expire: timestamp("expire", { precision: 6 }),
 });

@@ -9,6 +9,12 @@ import cors from "cors";
 
 import productRouter from "./routes/admin/products.js";
 import orderRoutes from "./routes/admin/orders.js";
+import genFunc from "connect-pg-simple";
+
+const PostgresqlStore = genFunc(session);
+const sessionStore = new PostgresqlStore({
+  conString: process.env.DATABASE_URL as string,
+});
 
 const app = express();
 
@@ -17,6 +23,7 @@ const app = express();
 
 console.log(process.env.COOKIE_SECRET as string);
 const sessionMiddleware = session({
+  store: sessionStore,
   secret: process.env.COOKIE_SECRET as string,
   saveUninitialized: false,
   resave: false,
