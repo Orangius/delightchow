@@ -53,8 +53,8 @@ const checkAuthenticated = (request, response, next) => {
 };
 // ......................Routes registration...................................
 app.use("/api", userRoutes);
-app.use("/api/admin", checkAuthenticated, productRouter);
-app.use("/api/admin", checkAuthenticated, orderRoutes);
+app.use("/api/admin", productRouter);
+app.use("/api/admin", orderRoutes);
 app.get("/", (request, response) => {
     response.send("Welcome to delight chow");
 });
