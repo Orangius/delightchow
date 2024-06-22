@@ -34,7 +34,7 @@ const sessionMiddleware = session({
 });
 
 const corsOptions = {
-  origin: "delightchow-frontend.vercel.app", // Replace with your client's origin
+  origin: "https://delightchow-frontend.vercel.app", // Replace with your client's origin
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
