@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-import userRoutes from "@/routes/users/users.js";
+import userRoutes from "./routes/users/users.js";
 import session from "express-session";
 import "dotenv/config";
 import "@/strategies/local-strategy.js";
@@ -9,6 +9,7 @@ import cors from "cors";
 
 import productRouter from "./routes/admin/products.js";
 import orderRoutes from "./routes/admin/orders.js";
+
 const app = express();
 
 //body parser middleware to parse request body
