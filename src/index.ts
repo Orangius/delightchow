@@ -62,6 +62,10 @@ app.use("/api", userRoutes);
 app.use("/api/admin", checkAuthenticated, productRouter);
 app.use("/api/admin", checkAuthenticated, orderRoutes);
 
+app.get("/", (request, response) => {
+  response.send("Welcome to delight chow");
+});
+
 app.post(
   "/api/login",
   (req: Request, res: Response, next: NextFunction) => {
