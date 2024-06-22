@@ -34,14 +34,14 @@ const sessionMiddleware = session({
 });
 
 const corsOptions = {
-  origin: "http://localhost:5173", // Replace with your client's origin
+  origin: "delightchow-frontend.vercel.app", // Replace with your client's origin
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
   optionsSuccessStatus: 200,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
