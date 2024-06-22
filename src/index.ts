@@ -41,7 +41,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
