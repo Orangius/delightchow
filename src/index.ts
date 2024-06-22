@@ -22,6 +22,7 @@ const app = express();
 // this parses the json type
 
 console.log(process.env.COOKIE_SECRET as string);
+
 const sessionMiddleware = session({
   store: sessionStore,
   secret: process.env.COOKIE_SECRET as string,
@@ -30,6 +31,7 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 1000 * 60 * 60,
     httpOnly: true,
+    sameSite: "none",
   },
 });
 

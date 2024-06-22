@@ -25,6 +25,7 @@ const sessionMiddleware = session({
     cookie: {
         maxAge: 1000 * 60 * 60,
         httpOnly: true,
+        sameSite: "none",
     },
 });
 const corsOptions = {
