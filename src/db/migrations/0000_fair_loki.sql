@@ -1,3 +1,15 @@
+DO $$ BEGIN
+ CREATE TYPE "public"."status" AS ENUM('pending', 'out for delivery', 'delivered');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."role" AS ENUM('user', 'admin', 'super_admin');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "foods" (
 	"food_id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
@@ -19,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
 	"order_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" integer,
 	"order_date" timestamp DEFAULT now(),
-	"status" varchar(50),
+	"status" "status",
 	"total_amount" integer NOT NULL
 );
 --> statement-breakpoint
@@ -45,6 +57,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"password" varchar(255) NOT NULL,
 	"phone" varchar(15),
 	"address" text,
+	"role" "role",
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

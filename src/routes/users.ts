@@ -7,7 +7,7 @@ import bcryptjs from "bcryptjs";
 import {
   validateNewUser,
   validatePatchRequest,
-} from "@/middlewares/user_validation.js";
+} from "@/validators/user_validation.js";
 
 const router = Router();
 
@@ -42,7 +42,7 @@ router.get("/users/:id", async (request, response) => {
 
 // post request for creating a new user
 router.post(
-  "/users",
+  "/register",
   validateNewUser,
   async (request: Request, response: Response) => {
     const { body } = request;

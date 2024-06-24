@@ -14,6 +14,7 @@ export interface User {
   email: string;
   phone: string;
   address: string;
+  role: string;
   // Add other properties that exist in your `users` table
 }
 
@@ -31,6 +32,7 @@ passport.deserializeUser(async (id, done) => {
         user_id: users.user_id,
         surname: users.surname,
         lastname: users.lastname,
+        role: users.role,
         email: users.email,
         phone: users.phone,
         address: users.address,

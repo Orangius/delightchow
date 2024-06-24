@@ -1,15 +1,17 @@
 import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-import userRoutes from "./routes/users/users.js";
+
 import session from "express-session";
 import "dotenv/config";
 import "@/strategies/local-strategy.js";
 import passport from "passport";
 import cors from "cors";
 
-import productRouter from "./routes/admin/products.js";
-import orderRoutes from "./routes/admin/orders.js";
+import productRouter from "@/routes/products.js";
+import orderRoutes from "@/routes/orders.js";
+import authROuter from "@/routes/auth.js";
 import genFunc from "connect-pg-simple";
+import userRoutes from "@/routes/users.js";
 
 const PostgresqlStore = genFunc(session);
 const sessionStore = new PostgresqlStore({
@@ -20,8 +22,6 @@ const app = express();
 
 //body parser middleware to parse request body
 // this parses the json type
-
-console.log(process.env.COOKIE_SECRET as string);
 
 const sessionMiddleware = session({
   store: sessionStore,
@@ -52,94 +52,14 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// .................route protection........................
-const checkAuthenticated = (
-  request: Request,
-  response: Response,
-  next: NextFunction
-) => {
-  if (request.isAuthenticated()) {
-    return next();
-  } else {
-    return response.status(401).send({ message: "Not unauthorized" });
-  }
-  //return response.redirect("http://localhost:5173/api/admin/login");
-};
-
 // ......................Routes registration...................................
+app.use("/api", authROuter);
 app.use("/api", userRoutes);
-app.use("/api/admin", productRouter);
-app.use("/api/admin", orderRoutes);
+app.use("/api", productRouter);
+app.use("/api", orderRoutes);
 
 app.get("/", (request, response) => {
   response.send("Welcome to delight chow");
-});
-
-app.post(
-  "/api/login",
-  (req: Request, res: Response, next: NextFunction) => {
-    console.log("Request got here");
-    passport.authenticate(
-      "local",
-      (
-        err: any,
-        user: Express.User | false | null,
-        info: object | string | Array<string | undefined>
-      ) => {
-        if (err) {
-          console.log("err is: ", err.message);
-          return next(err);
-        }
-
-        if (!user) {
-          return res.status(401).send(info);
-        }
-        console.log("info: ", info);
-        req.user = user;
-        req.login(user, (err) => {
-          // ! important
-          if (err) {
-            return res.status(500).send({ error: "Login failed." });
-          }
-          res.status(200).send();
-        });
-      }
-    )(req, res, next);
-  },
-  (err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack); // Log the error stack trace for debugging
-    res.status(err.status || 401).json({
-      error: {
-        message: err.message || "Invalid credentials",
-      },
-    });
-  }
-);
-//
-
-app.post("/api/admin/logout", function (request, response, next) {
-  console.log("request user: ", request.user);
-  request.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    request.session.destroy(function (err) {
-      // destroys the session
-      response
-        .status(200)
-        .clearCookie("connect.sid")
-        .send({ message: "Logout successful" }); // clear the cookie
-    });
-
-    //response.redirect("/");
-  });
-});
-
-app.get("/api/auth/status", (request, response) => {
-  console.log("Request HeadersD: ", request.headers);
-  if (!request.user)
-    return response.status(401).send({ messge: "Unauthenticated" });
-  return response.status(200).send({ messge: "Authenticated" });
 });
 
 // app.post(

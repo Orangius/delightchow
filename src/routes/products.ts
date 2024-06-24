@@ -6,13 +6,13 @@ import { eq } from "drizzle-orm";
 import {
   validateProductPatchBody,
   validateProductPostBody,
-} from "@/middlewares/product_validation.js";
-import { matchedData, validationResult } from "express-validator";
+} from "@/validators/product_validation.js";
+import { validationResult } from "express-validator";
 
 ///.............packages needed for upload.......................
-import { Upload } from "@aws-sdk/lib-storage";
-import fs from "fs";
-import { multerUpload, s3 } from "@/s3/s3.js";
+// import { Upload } from "@aws-sdk/lib-storage";
+// import fs from "fs";
+import { s3Upload } from "@/s3/s3.js";
 
 const productRouter = Router();
 
@@ -49,39 +49,19 @@ productRouter.get(
 
 productRouter.post(
   "/products",
-  multerUpload.single("file"),
+  s3Upload.single("file"),
   validateProductPostBody,
   async (request: Request, response: Response) => {
     const { body } = request;
-    console.log("Body: ", body);
-    console.log("File: ", request.file);
     const result = validationResult(request);
     if (!result.isEmpty())
       return response.status(400).send({ error: result.array() });
 
-    const localFilePath = request.file?.path as string;
-    const fileStream = fs.createReadStream(localFilePath);
-
-    const upload = new Upload({
-      client: s3,
-      params: {
-        Bucket: process.env.BUCKET_NAME as string,
-        Key: request.file?.originalname,
-        Body: fileStream,
-        ContentType: request.file?.mimetype,
-      },
-    });
+    const file = request.file as Express.MulterS3.File;
+    const imageURL = file.location;
+    console.log("ImageUrl: ", imageURL);
 
     try {
-      //..................upl
-      const s3UploadResult = await upload.done();
-
-      //delete the file from the pc
-      fs.unlink(localFilePath, (err) => {
-        if (err) throw err;
-      });
-
-      const imageURL = s3UploadResult.Location as string;
       const insertedProduct = await db
         .insert(foods)
         .values({

@@ -7,8 +7,10 @@ import {
   uuid,
   timestamp,
   json,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
+export const roleEnum = pgEnum("role", ["user", "admin", "super_admin"]);
 export const users = pgTable("users", {
   user_id: serial("user_id").primaryKey(),
   surname: varchar("surname", { length: 256 }).notNull(),
@@ -17,6 +19,7 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 15 }),
   address: text("address"),
+  role: roleEnum("role").default("user"),
 });
 
 export const foods = pgTable("foods", {
@@ -28,11 +31,16 @@ export const foods = pgTable("foods", {
   category: varchar("category", { length: 50 }),
 });
 
+export const orderStatusEnum = pgEnum("status", [
+  "pending",
+  "out for delivery",
+  "delivered",
+]);
 export const orders = pgTable("orders", {
   order_id: uuid("order_id").primaryKey().defaultRandom(),
   user_id: integer("user_id").references(() => users.user_id),
   order_date: timestamp("order_date").defaultNow(),
-  status: varchar("status", { length: 50 }),
+  status: orderStatusEnum("status"),
   total_amount: integer("total_amount").notNull(),
 });
 
