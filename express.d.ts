@@ -30,6 +30,7 @@ declare global {
       email: string;
       phone: string;
       address: string;
+      role: string;
     }
   }
 }
