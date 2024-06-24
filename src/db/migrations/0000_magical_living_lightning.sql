@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"password" varchar(255) NOT NULL,
 	"phone" varchar(15),
 	"address" text,
-	"role" "role",
+	"role" "role" DEFAULT 'user',
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
