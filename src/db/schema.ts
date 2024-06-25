@@ -40,7 +40,7 @@ export const orders = pgTable("orders", {
   order_id: uuid("order_id").primaryKey().defaultRandom(),
   user_id: integer("user_id").references(() => users.user_id),
   order_date: timestamp("order_date").defaultNow(),
-  status: orderStatusEnum("status"),
+  status: orderStatusEnum("status").default("pending"),
   total_amount: integer("total_amount").notNull(),
 });
 

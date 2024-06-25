@@ -6,6 +6,12 @@ const authRouter = Router();
 authRouter.post(
   "/login",
   (req: Request, res: Response, next: NextFunction) => {
+    if (req.user)
+      return res.status(401).json({
+        error: {
+          message: "user already logged in",
+        },
+      });
     passport.authenticate(
       "local",
       (
@@ -42,7 +48,7 @@ authRouter.post(
     });
   }
 );
-//
+// s%3AYgnxy-sTmhHL6_M8lhPiakHVAJMc8xPD.hkrNlYZ2dECuMxcAbe7fYsyzjDis84ebcPojwYq7mdE
 
 authRouter.post("/logout", function (request, response, next) {
   console.log("request user: ", request.user);

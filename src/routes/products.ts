@@ -3,10 +3,6 @@ import {
   validateProductPatchBody,
   validateProductPostBody,
 } from "@/validators/product_validation.js";
-
-///.............packages needed for upload.......................
-// import { Upload } from "@aws-sdk/lib-storage";
-// import fs from "fs";
 import { s3Upload } from "@/s3/s3.js";
 import { authenticate, authorize } from "@/middlewares/authMiddleware.js";
 import {
@@ -16,7 +12,6 @@ import {
   getProductById,
   patchUpdateProduct,
 } from "@/controllers/products.js";
-
 const productRouter = Router();
 
 productRouter.get("/products", getAllProducts);

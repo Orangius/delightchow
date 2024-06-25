@@ -31,12 +31,12 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 1000 * 60 * 60,
     httpOnly: true,
-    sameSite: "none",
+    // sameSite: "none",
   },
 });
 
 const corsOptions = {
-  origin: "https://delightchow-frontend.vercel.app", // Replace with your client's origin
+  origin: "http://localhost:5173", // Replace with your client's origin
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow specified methods
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
@@ -59,7 +59,7 @@ app.use("/api", productRouter);
 app.use("/api", orderRoutes);
 
 app.get("/", (request, response) => {
-  response.send("Welcome to delight chow");
+  response.send("Welcome to delight chowww");
 });
 
 // app.post(

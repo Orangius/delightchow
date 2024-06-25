@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
 	"order_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" integer,
 	"order_date" timestamp DEFAULT now(),
-	"status" "status",
+	"status" "status" DEFAULT 'pending',
 	"total_amount" integer NOT NULL
 );
 --> statement-breakpoint
