@@ -61,7 +61,7 @@ app.use("/api", orderRoutes);
 app.get("/", (request, response) => {
   response.send("Welcome to delight chowww");
 });
-
+//
 // app.post(
 //   "/api/upload",
 //   upload.single("avatar"),
