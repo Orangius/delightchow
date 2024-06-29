@@ -35,13 +35,25 @@ const sessionMiddleware = session({
   },
 });
 
-const corsOptions = {
+const corsOptionsDev = {
   origin: "http://localhost:5173", // Replace with your client's origin
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow specified methods
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
   optionsSuccessStatus: 200,
 };
+const corsOptionsProd = {
+  origin: "https://delightchow-frontend.vercel.app", // Replace with your client's origin
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow specified methods
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
+  optionsSuccessStatus: 200,
+};
+
+const corsOptions =
+  (process.env.NODE_ENV as string) === "production"
+    ? corsOptionsProd
+    : corsOptionsDev;
 
 app.use(cors(corsOptions));
 app.use(sessionMiddleware);
